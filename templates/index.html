@@ -59,6 +59,17 @@
         <div class="hero-bg">
             <img src="{{ url_for('static', path='Noor_e_mahal_ png (1).png') }}" alt="Noor E Mahal Palace">
         </div>
+        <!-- 3D Floating Particles -->
+        <div class="hero-particles">
+            <span class="hero-particle"></span>
+            <span class="hero-particle"></span>
+            <span class="hero-particle"></span>
+            <span class="hero-particle"></span>
+            <span class="hero-particle"></span>
+            <span class="hero-particle"></span>
+            <span class="hero-particle"></span>
+            <span class="hero-particle"></span>
+        </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <div class="hero-frame">
@@ -84,22 +95,27 @@
             <div class="venues-grid">
                 <div class="venue-card reveal delay-1">
                     <img src="{{ url_for('static', path='Noor_e_mahal_ png (1).png') }}" alt="The Grand Hall">
+                    <div class="venue-shine"></div>
                     <span class="venue-card-label">The Grand Hall</span>
                 </div>
                 <div class="venue-card reveal delay-2">
                     <img src="{{ url_for('static', path='Noor_e_mahal_ png (2).png') }}" alt="The Royal Gardens">
+                    <div class="venue-shine"></div>
                     <span class="venue-card-label">The Royal Gardens</span>
                 </div>
                 <div class="venue-card reveal delay-3">
                     <img src="{{ url_for('static', path='Noor_e_mahal_ png (5).png') }}" alt="The Heritage Wing">
+                    <div class="venue-shine"></div>
                     <span class="venue-card-label">The Heritage Wing</span>
                 </div>
                 <div class="venue-card reveal delay-4">
                     <img src="{{ url_for('static', path='Noor_e_mahal_ png (1).png') }}" alt="The Crown Courtyard">
+                    <div class="venue-shine"></div>
                     <span class="venue-card-label">The Crown Courtyard</span>
                 </div>
                 <div class="venue-card reveal delay-5">
                     <img src="{{ url_for('static', path='Noor_e_mahal_ png (2).png') }}" alt="The Crystal Ballroom">
+                    <div class="venue-shine"></div>
                     <span class="venue-card-label">The Crystal Ballroom</span>
                 </div>
             </div>
@@ -155,11 +171,15 @@
     </section>
 
     <!-- ============ PALACE SHOWCASE ============ -->
-    <section class="palace-showcase reveal-scale">
-        <img src="{{ url_for('static', path='Noor_e_mahal_ png (5).png') }}" alt="Noor E Mahal Palace Panoramic View">
+    <section class="palace-showcase">
+        <div class="palace-showcase-bg">
+            <img src="{{ url_for('static', path='Noor_e_mahal_ png (5).png') }}"
+                alt="Noor E Mahal Palace Panoramic View">
+        </div>
         <div class="palace-showcase-overlay">
             <div class="palace-showcase-text">
                 <h2 class="gold-shimmer">Where Dreams Meet Destiny</h2>
+                <p>Experience timeless grandeur in every moment</p>
             </div>
         </div>
     </section>

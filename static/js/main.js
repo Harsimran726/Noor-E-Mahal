@@ -1,6 +1,6 @@
 /* ============================================================
    NOOR E MAHAL — Main JavaScript
-   Premium Animations & Interactivity
+   Premium 3D Parallax Animations & Interactivity
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('load', () => {
             setTimeout(() => preloader.classList.add('hidden'), 800);
         });
-        // Fallback: hide after 3 seconds
         setTimeout(() => preloader.classList.add('hidden'), 3000);
     }
 
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks.classList.toggle('open');
             navToggle.classList.toggle('active');
         });
-        // Close on link click
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.classList.remove('open');
@@ -73,16 +71,149 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     revealElements.forEach(el => revealObserver.observe(el));
 
-    // ——— Parallax on Hero ———
-    const heroBg = document.querySelector('.hero-bg img');
-    if (heroBg) {
+    // ============================================================
+    //  3D PARALLAX — Hero Mouse Tracking
+    //  Background moves in opposite direction, content follows mouse
+    // ============================================================
+    const hero = document.querySelector('.hero');
+    const heroBg = document.querySelector('.hero-bg');
+    const heroContent = document.querySelector('.hero-content');
+
+    if (hero && heroBg) {
+        // Mouse-tracking 3D parallax on hero
+        hero.addEventListener('mousemove', (e) => {
+            const rect = hero.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;  // -0.5 to 0.5
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+            // Background: moves opposite to mouse for depth
+            const bgX = x * -25;
+            const bgY = y * -15;
+            heroBg.style.transform = `translate3d(${bgX}px, ${bgY}px, -50px) scale(1.05)`;
+
+            // Content: moves slightly with mouse for floating feel
+            if (heroContent) {
+                const contentX = x * 12;
+                const contentY = y * 8;
+                heroContent.style.transform = `translate3d(${contentX}px, ${contentY}px, 30px)`;
+            }
+        });
+
+        hero.addEventListener('mouseleave', () => {
+            heroBg.style.transform = 'translate3d(0, 0, -50px) scale(1.05)';
+            if (heroContent) {
+                heroContent.style.transform = 'translate3d(0, 0, 30px)';
+            }
+        });
+
+        // Scroll parallax on hero (depth scrolling)
         window.addEventListener('scroll', () => {
             const scrolled = window.scrollY;
             if (scrolled < window.innerHeight) {
-                heroBg.style.transform = `scale(${1 + scrolled * 0.0002}) translateY(${scrolled * 0.3}px)`;
+                const parallaxY = scrolled * 0.4;
+                const scale = 1.05 + scrolled * 0.0002;
+                heroBg.style.transform = `translate3d(0, ${parallaxY}px, -50px) scale(${scale})`;
+
+                // Fade content as you scroll down
+                if (heroContent) {
+                    const opacity = Math.max(0, 1 - scrolled / (window.innerHeight * 0.6));
+                    heroContent.style.opacity = opacity;
+                }
             }
         }, { passive: true });
     }
+
+    // ============================================================
+    //  3D PARALLAX — Venue Cards Mouse Tracking
+    //  Each card tilts and shifts based on cursor position
+    // ============================================================
+    const venueCards = document.querySelectorAll('.venue-card');
+    venueCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top) / rect.height;
+            const centerX = x - 0.5;
+            const centerY = y - 0.5;
+
+            // 3D rotation
+            const rotateX = centerY * -15;
+            const rotateY = centerX * 15;
+
+            card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`;
+            card.style.boxShadow = `
+                ${-centerX * 20}px ${-centerY * 20}px 40px rgba(0,0,0,0.25),
+                0 0 20px rgba(197,163,85,0.15)
+            `;
+
+            // Move shine layer to follow mouse
+            const shine = card.querySelector('.venue-shine');
+            if (shine) {
+                shine.style.background = `
+                    radial-gradient(
+                        circle at ${x * 100}% ${y * 100}%,
+                        rgba(255,255,255,0.3) 0%,
+                        rgba(255,255,255,0.05) 50%,
+                        transparent 80%
+                    )
+                `;
+                shine.style.opacity = '1';
+            }
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            card.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
+            const shine = card.querySelector('.venue-shine');
+            if (shine) shine.style.opacity = '0';
+        });
+    });
+
+    // ============================================================
+    //  3D PARALLAX — Palace Showcase Scroll
+    //  Image moves slower than scroll for depth feel
+    // ============================================================
+    const palaceShowcase = document.querySelector('.palace-showcase');
+    const palaceBg = document.querySelector('.palace-showcase-bg');
+    const palaceText = document.querySelector('.palace-showcase-text');
+
+    if (palaceShowcase) {
+        window.addEventListener('scroll', () => {
+            const rect = palaceShowcase.getBoundingClientRect();
+            const viewH = window.innerHeight;
+
+            if (rect.top < viewH && rect.bottom > 0) {
+                const progress = (viewH - rect.top) / (viewH + rect.height);
+                const translateY = (progress - 0.5) * -80;
+
+                if (palaceBg) {
+                    palaceBg.style.transform = `translate3d(0, ${translateY}px, 0) scale(1.05)`;
+                }
+                if (palaceText) {
+                    const textY = (progress - 0.5) * 30;
+                    palaceText.style.transform = `translate3d(0, ${textY}px, 0)`;
+                }
+            }
+        }, { passive: true });
+    }
+
+    // ============================================================
+    //  3D PARALLAX — Sections Scroll Depth
+    //  Elements get subtle 3D rotation on scroll
+    // ============================================================
+    const parallaxSections = document.querySelectorAll('.services-section, .testimonials-section, .elephant-section');
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const progress = entry.intersectionRatio;
+                const el = entry.target;
+                const rotateX = (1 - progress) * 3;
+                el.style.transform = `perspective(1500px) rotateX(${rotateX}deg)`;
+                el.style.transformOrigin = 'center bottom';
+            }
+        });
+    }, { threshold: Array.from({ length: 20 }, (_, i) => i / 20) });
+    parallaxSections.forEach(s => sectionObserver.observe(s));
 
     // ——— Testimonials Carousel ———
     const track = document.querySelector('.testimonials-track');
@@ -107,8 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const goToSlide = (index) => {
             currentSlide = index;
-            const offset = -(currentSlide * (100 / totalSlides));
-            // Actually move by cards
             const translateX = -(currentSlide * cardsPerView * (100 / cards.length));
             track.style.transform = `translateX(${translateX}%)`;
             dots.forEach((dot, i) => {
@@ -120,13 +249,11 @@ document.addEventListener('DOMContentLoaded', () => {
             dot.addEventListener('click', () => goToSlide(i));
         });
 
-        // Auto-play
         let autoPlay = setInterval(() => {
             const next = (currentSlide + 1) % totalSlides;
             goToSlide(next);
         }, 5000);
 
-        // Pause on hover
         const carousel = document.querySelector('.testimonials-carousel');
         if (carousel) {
             carousel.addEventListener('mouseenter', () => clearInterval(autoPlay));
@@ -138,43 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Recalculate on resize
         window.addEventListener('resize', () => {
             updateCardsPerView();
             goToSlide(0);
         });
-
         goToSlide(0);
     }
 
-    // ——— Counter Animation (for stats if present) ———
-    const counters = document.querySelectorAll('[data-count]');
-    if (counters.length > 0) {
-        const counterObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !entry.target.dataset.counted) {
-                    entry.target.dataset.counted = 'true';
-                    const target = parseInt(entry.target.dataset.count);
-                    const duration = 2000;
-                    const steps = 60;
-                    const increment = target / steps;
-                    let current = 0;
-                    const timer = setInterval(() => {
-                        current += increment;
-                        if (current >= target) {
-                            entry.target.textContent = target + '+';
-                            clearInterval(timer);
-                        } else {
-                            entry.target.textContent = Math.floor(current) + '+';
-                        }
-                    }, duration / steps);
-                }
-            });
-        }, { threshold: 0.5 });
-        counters.forEach(el => counterObserver.observe(el));
-    }
-
-    // ——— Tilt effect on service cards ———
+    // ——— 3D Tilt on Service Cards ———
     const serviceCards = document.querySelectorAll('.service-card');
     serviceCards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
@@ -183,24 +281,43 @@ document.addEventListener('DOMContentLoaded', () => {
             const y = e.clientY - rect.top;
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
-            const rotateX = (y - centerY) / 20;
-            const rotateY = (centerX - x) / 20;
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+            const rotateX = (y - centerY) / 15;
+            const rotateY = (centerX - x) / 15;
+            card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) translateZ(20px)`;
+            card.style.boxShadow = `
+                ${(centerX - x) / 8}px ${(centerY - y) / 8}px 40px rgba(0,0,0,0.12),
+                0 0 0 1px rgba(197,163,85,0.2)
+            `;
         });
         card.addEventListener('mouseleave', () => {
-            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0) translateZ(0)';
+            card.style.boxShadow = '';
         });
     });
 
-    // ——— Typed Effect on Hero Title ———
+    // ——— 3D Tilt on Testimonial Cards ———
+    const testimonialInners = document.querySelectorAll('.testimonial-inner');
+    testimonialInners.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            card.style.transform = `perspective(600px) rotateX(${y * -8}deg) rotateY(${x * 8}deg) scale(1.02)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(600px) rotateX(0) rotateY(0) scale(1)';
+        });
+    });
+
+    // ——— Hero Title Reveal Animation ———
     const heroTitle = document.querySelector('.hero-title');
     if (heroTitle) {
         heroTitle.style.opacity = '0';
-        heroTitle.style.transform = 'translateY(30px)';
+        heroTitle.style.transform = 'translateY(30px) translateZ(0)';
         setTimeout(() => {
-            heroTitle.style.transition = 'opacity 1s ease, transform 1s ease';
+            heroTitle.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
             heroTitle.style.opacity = '1';
-            heroTitle.style.transform = 'translateY(0)';
+            heroTitle.style.transform = 'translateY(0) translateZ(0)';
         }, 500);
     }
     const heroSubtitle = document.querySelector('.hero-subtitle');
@@ -208,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         heroSubtitle.style.opacity = '0';
         heroSubtitle.style.transform = 'translateY(20px)';
         setTimeout(() => {
-            heroSubtitle.style.transition = 'opacity 1s ease, transform 1s ease';
+            heroSubtitle.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
             heroSubtitle.style.opacity = '1';
             heroSubtitle.style.transform = 'translateY(0)';
         }, 900);
@@ -216,11 +333,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroCta = document.querySelector('.hero-cta');
     if (heroCta) {
         heroCta.style.opacity = '0';
-        heroCta.style.transform = 'translateY(20px)';
+        heroCta.style.transform = 'translateY(20px) scale(0.95)';
         setTimeout(() => {
-            heroCta.style.transition = 'opacity 1s ease, transform 1s ease';
+            heroCta.style.transition = 'opacity 1s ease, transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
             heroCta.style.opacity = '1';
-            heroCta.style.transform = 'translateY(0)';
+            heroCta.style.transform = 'translateY(0) scale(1)';
         }, 1300);
     }
 
