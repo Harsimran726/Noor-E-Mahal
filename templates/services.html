@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services — Noor E Mahal</title>
+    <link rel="icon" href="{{ url_for('static', path='Noor_e_mahal_ png (6).png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <style>
+        .svc-hero {
+            height: 45vh;
+            min-height: 320px;
+            background: url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&q=80') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .svc-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(253, 248, 239, 0.15), rgba(107, 15, 26, 0.55));
+        }
+
+        .svc-hero h1 {
+            position: relative;
+            z-index: 1;
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            color: var(--cream);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        .svc-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        .svc-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 60px;
+            padding-bottom: 60px;
+            border-bottom: 1px solid rgba(197, 163, 85, 0.15);
+        }
+
+        .svc-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .svc-block:nth-child(even) {
+            direction: rtl;
+        }
+
+        .svc-block:nth-child(even)>* {
+            direction: ltr;
+        }
+
+        @media (max-width: 768px) {
+            .svc-block {
+                grid-template-columns: 1fr;
+            }
+
+            .svc-block:nth-child(even) {
+                direction: ltr;
+            }
+        }
+
+        .svc-block-img {
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .svc-block-img img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .svc-block-img:hover img {
+            transform: scale(1.04);
+        }
+
+        .svc-block-text h2 {
+            font-family: var(--font-heading);
+            font-size: 1.6rem;
+            color: var(--maroon-deep);
+            margin-bottom: 14px;
+            letter-spacing: 1px;
+        }
+
+        .svc-block-text p {
+            font-family: var(--font-ui);
+            font-size: 0.88rem;
+            color: var(--text-body);
+            line-height: 1.8;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <a href="/" class="nav-brand">
+                <img src="{{ url_for('static', path='Noor_e_mahal_ png (6).png') }}" alt="Logo" class="nav-logo">
+                <div class="nav-brand-text">Noor E Mahal <span>Story Begins in Royal Palace</span></div>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">Home</a></li>
+                <li class="nav-separator">|</li>
+                <li><a href="/gallery">Gallery</a></li>
+                <li class="nav-separator">|</li>
+                <li><a href="/about">About</a></li>
+                <li class="nav-separator">|</li>
+                <li><a href="/facilities">Facilities</a></li>
+                <li class="nav-separator">|</li>
+                <li><a href="/services" class="active">Services</a></li>
+                <li class="nav-separator">|</li>
+                <li><a href="/contact" class="nav-cta">Contact Us</a></li>
+            </ul>
+            <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <section class="svc-hero">
+        <h1>Services</h1>
+    </section>
+
+    <div class="svc-content">
+        {% for svc in services %}
+        <div class="svc-block reveal">
+            <div class="svc-block-img">
+                <img src="{{ svc.image_url }}" alt="{{ svc.title }}">
+            </div>
+            <div class="svc-block-text">
+                <h2>{{ svc.title }}</h2>
+                <p>{{ svc.description }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Noor E Mahal &nbsp;<span class="heart">♥</span>&nbsp; All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+    <script src="{{ url_for('static', path='js/main.js') }}"></script>
+</body>
+
+</html>

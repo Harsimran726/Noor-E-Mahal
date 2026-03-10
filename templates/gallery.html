@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery — Noor E Mahal</title>
+    <link rel="icon" href="{{ url_for('static', path='Noor_e_mahal_ png (6).png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <style>
+        /* Gallery-specific styles */
+        .gallery-hero {
+            height: 45vh;
+            min-height: 320px;
+            background: url('https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1600&q=80') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .gallery-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(253, 248, 239, 0.2), rgba(107, 15, 26, 0.5));
+        }
+
+        .gallery-hero h1 {
+            position: relative;
+            z-index: 1;
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            color: var(--cream);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        .filter-bar {
+            background: var(--cream);
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(197, 163, 85, 0.2);
+            position: sticky;
+            top: 70px;
+            z-index: 50;
+        }
+
+        .filter-bar .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            font-family: var(--font-ui);
+            font-size: 0.72rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 8px 20px;
+            border: 1px solid rgba(197, 163, 85, 0.3);
+            background: transparent;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--maroon-deep);
+            color: var(--cream);
+            border-color: var(--maroon-deep);
+        }
+
+        .gallery-grid {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            columns: 4;
+            column-gap: 12px;
+        }
+
+        @media (max-width: 1024px) {
+            .gallery-grid {
+                columns: 3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                columns: 2;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                columns: 1;
+            }
+        }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 12px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+        }
+
+        .gallery-item .img-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px 14px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+            font-family: var(--font-ui);
+            font-size: 0.72rem;
+            color: var(--cream);
+            letter-spacing: 1px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .img-label {
+            transform: translateY(0);
+        }
+
+        .gallery-item[data-hidden="true"] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <a href="/" class="nav-brand">
+                <img src="{{ url_for('static', path='Noor_e_mahal_ png (6).png') }}" alt="Logo" class="nav-logo">
+                <div class="nav-brand-text">Noor E Mahal <span>Story Begins in Royal Palace</span></div>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/">Home</a></li>
+                <li class="nav-separator">|</li>
+                <li><a href="/gallery" class="active">Gallery</a></li>
+                <li class="nav-separator">|</li>
+                <li><a href="/about">About</a></li>
+                <li class="nav-separator">|</li>
+                <li><a href="/facilities">Facilities</a></li>
+                <li class="nav-separator">|</li>
+                <li><a href="/services">Services</a></li>
+                <li class="nav-separator">|</li>
+                <li><a href="/contact" class="nav-cta">Contact Us</a></li>
+            </ul>
+            <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="gallery-hero">
+        <h1>Gallery</h1>
+    </section>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="container">
+            <button class="filter-btn active" data-cat="all">All</button>
+            <button class="filter-btn" data-cat="gallery_outside">Outside</button>
+            <button class="filter-btn" data-cat="gallery_inside">Inside</button>
+            <button class="filter-btn" data-cat="gallery_hall">Hall</button>
+            <button class="filter-btn" data-cat="gallery_garden">Garden</button>
+            <button class="filter-btn" data-cat="gallery_rooms">Rooms</button>
+            <button class="filter-btn" data-cat="gallery_parking">Parking</button>
+        </div>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid" id="galleryGrid">
+        {% for img in images %}
+        <div class="gallery-item" data-category="{{ img.category }}">
+            <img src="{{ img.url }}" alt="{{ img.alt_text }}" loading="lazy">
+            <div class="img-label">{{ img.alt_text }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Noor E Mahal &nbsp;<span class="heart">♥</span>&nbsp; All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', path='js/main.js') }}"></script>
+    <script>
+        // Gallery filter
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const cat = btn.dataset.cat;
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    if (cat === 'all' || item.dataset.category === cat) {
+                        item.dataset.hidden = 'false';
+                        item.style.display = '';
+                    } else {
+                        item.dataset.hidden = 'true';
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
