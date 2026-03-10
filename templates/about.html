@@ -9,13 +9,32 @@
     <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
     <style>
         .about-hero {
+            position: relative;
             height: 45vh;
             min-height: 320px;
-            background: url('https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1600&q=80') center/cover;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+        }
+
+        .about-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out, transform 4s linear;
+            transform: scale(1.05);
+        }
+
+        .about-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .about-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .about-hero::after {
@@ -23,11 +42,12 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(to bottom, rgba(253, 248, 239, 0.15), rgba(107, 15, 26, 0.55));
+            z-index: 2;
         }
 
         .about-hero h1 {
             position: relative;
-            z-index: 1;
+            z-index: 3;
             font-family: var(--font-heading);
             font-size: 3rem;
             color: var(--cream);
@@ -128,32 +148,36 @@
                 <li class="nav-separator">|</li>
                 <li><a href="/gallery">Gallery</a></li>
                 <li class="nav-separator">|</li>
-                <li><a href="/about" class="active">About</a></li>
+                <li><a href="/about" class="active">About Us</a></li>
                 <li class="nav-separator">|</li>
                 <li><a href="/facilities">Facilities</a></li>
-                <li class="nav-separator">|</li>
-                <li><a href="/services">Services</a></li>
-                <li class="nav-separator">|</li>
-                <li><a href="/contact" class="nav-cta">Contact Us</a></li>
+                <li><a href="/contact" class="nav-cta">Contact</a></li>
             </ul>
             <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
         </div>
     </nav>
 
     <section class="about-hero">
-        <h1>About Us</h1>
+        <div class="about-slide active"><img
+                src="{{ images.get('about_hero_1', url_for('static', path='Noor_e_mahal_ png (1).png')) }}"
+                alt="About Hero 1"></div>
+        <div class="about-slide"><img
+                src="{{ images.get('about_hero_2', url_for('static', path='Noor_e_mahal_ png (5).png')) }}"
+                alt="About Hero 2"></div>
+        <h1>{{ content.get('about_hero_title', 'About Us') }}</h1>
     </section>
 
     <div class="about-content">
         <div class="about-block reveal">
             <div class="about-img">
-                <img src="{{ url_for('static', path='Noor_e_mahal_ png (1).png') }}" alt="Palace Exterior">
+                <img src="{{ images.get('about_section_1', url_for('static', path='Noor_e_mahal_ png (1).png')) }}"
+                    alt="Palace Exterior">
             </div>
             <div class="about-text">
-                <h2>{{ content.about_title | default("A Heritage of Punjabi Kings") }}</h2>
-                <p>{{ content.about_text | default("Noor E Mahal is not just a marriage palace; it is a manifestation of
-                    royal Punjabi architecture fused with British colonial elegance. Every detail tells a story of
-                    unmatched hospitality and majestic celebrations.") }}</p>
+                <h2>{{ content.get('about_section1_title', 'A Heritage of Punjabi Kings') }}</h2>
+                <p>{{ content.get('about_section1_p1', 'Noor E Mahal is not just a marriage palace; it is a
+                    manifestation of royal Punjabi architecture fused with British colonial elegance. Every detail tells
+                    a story of unmatched hospitality and majestic celebrations.') }}</p>
                 <p>Inspired by the grandeur of Punjabi royalty, Noor E Mahal stands as a testament to architectural
                     excellence. Its domes, arches, and intricate jali work echo the splendour of an era defined by
                     princely courts and royal celebrations.</p>
@@ -162,10 +186,11 @@
 
         <div class="about-block reverse reveal">
             <div class="about-img">
-                <img src="{{ url_for('static', path='Noor_e_mahal_ png (2).png') }}" alt="Palace Interior">
+                <img src="{{ images.get('about_section_2', url_for('static', path='Noor_e_mahal_ png (2).png')) }}"
+                    alt="Palace Interior">
             </div>
             <div class="about-text">
-                <h2>Where Every Moment is Royal</h2>
+                <h2>{{ content.get('about_section2_title', 'Where Every Moment is Royal') }}</h2>
                 <p>From the moment you step through the grand entrance, you are enveloped in an atmosphere of regal
                     sophistication. Crystal chandeliers illuminate marble halls, while hand-crafted details reflect
                     centuries of artisan tradition.</p>
@@ -176,10 +201,11 @@
 
         <div class="about-block reveal">
             <div class="about-img">
-                <img src="{{ url_for('static', path='Noor_e_mahal_ png (5).png') }}" alt="Palace Gardens">
+                <img src="{{ images.get('about_section_3', url_for('static', path='Noor_e_mahal_ png (5).png')) }}"
+                    alt="Palace Gardens">
             </div>
             <div class="about-text">
-                <h2>A Legacy Continuing</h2>
+                <h2>{{ content.get('about_section3_title', 'A Legacy Continuing') }}</h2>
                 <p>With a dedicated team of event planners, master chefs, and hospitality professionals, Noor E Mahal
                     ensures that your celebration is nothing short of legendary.</p>
                 <p>Our commitment to excellence has made us Punjab's most sought-after destination for weddings,
@@ -202,6 +228,17 @@
         </div>
     </footer>
     <script src="{{ url_for('static', path='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.about-slide');
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 5000);
+        });
+    </script>
 </body>
 
 </html>

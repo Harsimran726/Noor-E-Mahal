@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login — Noor E Mahal</title>
+    <link rel="icon" href="{{ url_for('static', path='Noor_e_mahal_ png (6).png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+
+        :root {
+            --maroon-deep: #4A0E17;
+            --maroon: #6B0F1A;
+            --cream: #FDF8EF;
+            --gold: #C5A355;
+            --gold-light: #E0CA86;
+            --gold-dark: #A58230;
+            --white: #ffffff;
+            --text-dark: #2C2C2C;
+            --font-heading: 'Cinzel', serif;
+            --font-ui: 'Lora', serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--maroon-deep), var(--maroon));
+            font-family: var(--font-ui);
+            color: var(--text-dark);
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("{{ url_for('static', path='Noor_e_mahal_ png (1).png') }}") center/cover no-repeat;
+            opacity: 0.15;
+            mix-blend-mode: overlay;
+        }
+
+        .login-card {
+            background: var(--cream);
+            padding: 50px 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            border: 1px solid var(--gold-light);
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUpFade {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .brand-logo {
+            width: 80px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        .login-title {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            color: var(--maroon-deep);
+            margin: 0 0 10px 0;
+        }
+
+        .login-subtitle {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 1px solid rgba(197, 163, 85, 0.4);
+            border-radius: 6px;
+            font-family: var(--font-ui);
+            font-size: 1rem;
+            background: var(--white);
+            color: var(--text-dark);
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--maroon);
+            box-shadow: 0 0 0 3px rgba(107, 15, 26, 0.1);
+        }
+
+        .error-message {
+            color: #d32f2f;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(197, 163, 85, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(197, 163, 85, 0.5);
+            background: linear-gradient(135deg, #b08d28, var(--gold-dark));
+        }
+
+        .login-btn:active {
+            transform: translateY(1px);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: #666;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--maroon);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <img src="{{ url_for('static', path='Noor_e_mahal_ png (6).png') }}" alt="Noor E Mahal Logo" class="brand-logo">
+        <h1 class="login-title">Royal Admin Portal</h1>
+        <p class="login-subtitle">Authenticate to manage your palace content</p>
+
+        {% if error %}
+        <div class="error-message">
+            <i class="fas fa-exclamation-circle"></i> {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/admin/login" method="POST">
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" name="username" class="form-control" placeholder="Username" required
+                    autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" class="form-control" placeholder="Password" required
+                    autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="login-btn">
+                <span>Unlock Portal</span>
+                <i class="fas fa-key"></i>
+            </button>
+        </form>
+
+        <a href="/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Return to Palace Homepage
+        </a>
+    </div>
+
+</body>
+
+</html>

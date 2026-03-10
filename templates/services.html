@@ -9,13 +9,32 @@
     <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
     <style>
         .svc-hero {
+            position: relative;
             height: 45vh;
             min-height: 320px;
-            background: url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&q=80') center/cover;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+        }
+
+        .svc-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out, transform 4s linear;
+            transform: scale(1.05);
+        }
+
+        .svc-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .svc-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .svc-hero::after {
@@ -23,11 +42,12 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(to bottom, rgba(253, 248, 239, 0.15), rgba(107, 15, 26, 0.55));
+            z-index: 2;
         }
 
         .svc-hero h1 {
             position: relative;
-            z-index: 1;
+            z-index: 3;
             font-family: var(--font-heading);
             font-size: 3rem;
             color: var(--cream);
@@ -135,6 +155,10 @@
     </nav>
 
     <section class="svc-hero">
+        <div class="svc-slide active"><img src="{{ url_for('static', path='Noor_e_mahal_ png (1).png') }}"
+                alt="Services Hero 1"></div>
+        <div class="svc-slide"><img src="{{ url_for('static', path='Noor_e_mahal_ png (5).png') }}"
+                alt="Services Hero 2"></div>
         <h1>Services</h1>
     </section>
 
@@ -160,6 +184,17 @@
         </div>
     </footer>
     <script src="{{ url_for('static', path='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.svc-slide');
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 5000);
+        });
+    </script>
 </body>
 
 </html>

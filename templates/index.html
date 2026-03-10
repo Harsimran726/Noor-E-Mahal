@@ -13,6 +13,9 @@
     <!-- Favicon -->
     <link rel="icon" href="{{ url_for('static', path='Noor_e_mahal_ png (6).png') }}" type="image/png">
 
+    <!-- FontAwesome (For Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
 </head>
@@ -36,15 +39,12 @@
                 </div>
             </a>
             <ul class="nav-links" id="navLinks">
-                <li><a href="#venues">Venues</a></li>
+                <li><a href="/gallery">Gallery</a></li>
                 <li class="nav-separator">|</li>
-                <li><a href="#services">Weddings</a></li>
+                <li><a href="/about">About Us</a></li>
                 <li class="nav-separator">|</li>
-                <li><a href="#services">Services</a></li>
-                <li class="nav-separator">|</li>
-                <li><a href="#testimonials">Gallery</a></li>
-                <li class="nav-separator">|</li>
-                <li><a href="#contact" class="nav-cta">Book A Tour</a></li>
+                <li><a href="/facilities">Facilities</a></li>
+                <li><a href="/contact" class="nav-cta">Contact</a></li>
             </ul>
             <div class="nav-toggle" id="navToggle">
                 <span></span>
@@ -54,11 +54,17 @@
         </div>
     </nav>
 
-    <!-- ============ HERO SECTION ============ -->
-    <section class="hero" id="hero">
-        <div class="hero-bg">
-            <img src="{{ url_for('static', path='Noor_e_mahal_ png (1).png') }}" alt="Noor E Mahal Palace">
+    <!-- ============ HERO SLIDER SECTION ============ -->
+    <section class="hero-slider" id="hero">
+        <div class="slide active">
+            <img src="{{ images.get('home_hero_1', url_for('static', path='Noor_e_mahal_ png (1).png')) }}"
+                class="slide-bg parallax-bg" alt="Noor E Mahal Palace 1">
         </div>
+        <div class="slide">
+            <img src="{{ images.get('home_hero_2', url_for('static', path='Noor_e_mahal_ png (5).png')) }}"
+                class="slide-bg parallax-bg" alt="Noor E Mahal Palace 2">
+        </div>
+
         <!-- 3D Floating Particles -->
         <div class="hero-particles">
             <span class="hero-particle"></span>
@@ -70,14 +76,20 @@
             <span class="hero-particle"></span>
             <span class="hero-particle"></span>
         </div>
-        <div class="hero-overlay"></div>
+
+        <div class="hero-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(107,15,26,0.5));">
+        </div>
+
         <div class="hero-content">
-            <div class="hero-frame">
-                <h1 class="hero-title">A Union of Cultures,<br>A Legacy of Love</h1>
-                <p class="hero-subtitle">Where Punjabi Grandeur Meets British Elegance</p>
-                <a href="#contact" class="hero-cta">Plan Your Royal Wedding</a>
+            <div class="hero-frame parallax-text">
+                <h1 class="hero-title pt-5">{{ content.get('home_hero_title', 'A Union of Cultures,<br>A Legacy of
+                    Love')|safe }}</h1>
+                <p class="hero-subtitle">{{ content.get('home_hero_subtitle', 'Where Punjabi Grandeur Meets British
+                    Elegance') }}</p>
+                <a href="#contact" class="hero-cta">{{ content.get('home_hero_cta', 'Plan Your Royal Wedding') }}</a>
             </div>
         </div>
+
         <!-- Scroll indicator -->
         <div class="scroll-indicator">
             <span>Scroll</span>
@@ -94,92 +106,114 @@
             </div>
             <div class="venues-grid">
                 <div class="venue-card reveal delay-1">
-                    <img src="{{ url_for('static', path='Noor_e_mahal_ png (1).png') }}" alt="The Grand Hall">
+                    <img src="{{ images.get('home_venue_1', url_for('static', path='Noor_e_mahal_ png (1).png')) }}"
+                        alt="The Grand Hall">
                     <div class="venue-shine"></div>
-                    <span class="venue-card-label">The Grand Hall</span>
+                    <span class="venue-card-label">{{ content.get('home_venue_label_1', 'The Grand Hall') }}</span>
                 </div>
                 <div class="venue-card reveal delay-2">
-                    <img src="{{ url_for('static', path='Noor_e_mahal_ png (2).png') }}" alt="The Royal Gardens">
+                    <img src="{{ images.get('home_venue_2', url_for('static', path='Noor_e_mahal_ png (2).png')) }}"
+                        alt="The Royal Gardens">
                     <div class="venue-shine"></div>
-                    <span class="venue-card-label">The Royal Gardens</span>
+                    <span class="venue-card-label">{{ content.get('home_venue_label_2', 'The Royal Gardens') }}</span>
                 </div>
                 <div class="venue-card reveal delay-3">
-                    <img src="{{ url_for('static', path='Noor_e_mahal_ png (5).png') }}" alt="The Heritage Wing">
+                    <img src="{{ images.get('home_venue_3', url_for('static', path='Noor_e_mahal_ png (5).png')) }}"
+                        alt="The Heritage Wing">
                     <div class="venue-shine"></div>
-                    <span class="venue-card-label">The Heritage Wing</span>
+                    <span class="venue-card-label">{{ content.get('home_venue_label_3', 'The Heritage Wing') }}</span>
                 </div>
                 <div class="venue-card reveal delay-4">
-                    <img src="{{ url_for('static', path='Noor_e_mahal_ png (1).png') }}" alt="The Crown Courtyard">
+                    <img src="{{ images.get('home_venue_4', url_for('static', path='Noor_e_mahal_ png (1).png')) }}"
+                        alt="The Crown Courtyard">
                     <div class="venue-shine"></div>
-                    <span class="venue-card-label">The Crown Courtyard</span>
+                    <span class="venue-card-label">{{ content.get('home_venue_label_4', 'The Crown Courtyard') }}</span>
                 </div>
                 <div class="venue-card reveal delay-5">
-                    <img src="{{ url_for('static', path='Noor_e_mahal_ png (2).png') }}" alt="The Crystal Ballroom">
+                    <img src="{{ images.get('home_venue_5', url_for('static', path='Noor_e_mahal_ png (2).png')) }}"
+                        alt="The Crystal Ballroom">
                     <div class="venue-shine"></div>
-                    <span class="venue-card-label">The Crystal Ballroom</span>
+                    <span class="venue-card-label">{{ content.get('home_venue_label_5', 'The Crystal Ballroom')
+                        }}</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ============ SERVICES SECTION ============ -->
-    <section class="services-section" id="services">
+    <!-- ============ FACILITIES SECTION ============ -->
+    <section class="services-section" id="facilities">
         <div class="container">
             <div class="section-heading reveal">
-                <h2 class="gold-shimmer">Services</h2>
-                <p>Crafting unforgettable royal experiences</p>
+                <h2 class="gold-shimmer">Palace Facilities</h2>
+                <p>Unmatched amenities for an extraordinary celebration</p>
             </div>
             <div class="services-grid">
-                <!-- Fusion Cuisine -->
+                {% if facilities %}
+                {% for fac in facilities %}
+                <div class="service-card reveal delay-{{ (loop.index0 % 3) + 1 }}">
+                    <img src="{{ url_for('static', path='Noor_e_mahal_ png (' + (range(1, 9)|random|string) + ').png') }}"
+                        class="service-card-bg" alt="{{ fac.name }}">
+                    <div class="service-card-overlay"></div>
+                    <div class="service-card-content">
+                        <div class="service-icon"><i
+                                class="{{ fac.icon_class if fac.icon_class else 'fas fa-star' }} fa-2x"></i></div>
+                        <h3>{{ fac.name }}</h3>
+                        <p>{{ fac.description }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <!-- Fallback static content if DB is empty -->
+                <!-- Facility 1 -->
                 <div class="service-card reveal delay-1">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M32 4c-2 0-4 1.5-4 4v18h-4V10c0-2.5-2-4-4-4s-4 1.5-4 4v16h-4V14c0-2.5-2-4-4-4s-4 1.5-4 4v22c0 8 6 14.5 14 15.8V60h16V51.8c8-1.3 14-7.8 14-15.8V14c0-2.5-2-4-4-4s-4 1.5-4 4v12h-4V10c0-2.5-2-4-4-4s-4 1.5-4 4v16h-4V8c0-2.5-2-4-4-4z" />
-                        </svg>
+                    <img src="{{ url_for('static', path='Noor_e_mahal_ png (5).png') }}" class="service-card-bg"
+                        alt="Facility">
+                    <div class="service-card-overlay"></div>
+                    <div class="service-card-content">
+                        <div class="service-icon"><i class="fas fa-snowflake fa-2x"></i></div>
+                        <h3>AC Bride & Groom Room</h3>
+                        <p>Luxurious, fully air-conditioned private suites designed for comfort and preparation.</p>
                     </div>
-                    <h3>Fusion Cuisine</h3>
-                    <p>Exquisite Fusion cuisine blending traditional Punjabi flavors with international gourmet, served
-                        with unparalleled elegance.</p>
                 </div>
-                <!-- Custom Designs -->
+                <!-- Facility 2 -->
                 <div class="service-card reveal delay-2">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M32 2L4 18v28l28 16 28-16V18L32 2zm0 6l22 12.7v22.6L32 56 10 43.3V20.7L32 8zm0 8c-8.8 0-16 7.2-16 16s7.2 16 16 16 16-7.2 16-16-7.2-16-16-16zm0 6c5.5 0 10 4.5 10 10s-4.5 10-10 10-10-4.5-10-10 4.5-10 10-10z" />
-                        </svg>
+                    <img src="{{ url_for('static', path='Noor_e_mahal_ png (1).png') }}" class="service-card-bg"
+                        alt="Facility">
+                    <div class="service-card-overlay"></div>
+                    <div class="service-card-content">
+                        <div class="service-icon"><i class="fas fa-car fa-2x"></i></div>
+                        <h3>Big Parking Space</h3>
+                        <p>Secure and expansive valet parking area capable of comfortably accommodating 50+ vehicles.
+                        </p>
                     </div>
-                    <h3>Custom Designs</h3>
-                    <p>Custom designs transforming your celebration into a one-of-a-kind masterpiece, tailored to
-                        reflect your unique love story.</p>
                 </div>
-                <!-- Concierge Service -->
+                <!-- Facility 3 -->
                 <div class="service-card reveal delay-3">
-                    <div class="service-icon">
-                        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M32 4C18.7 4 8 14.7 8 28h4c0-11 9-20 20-20s20 9 20 20h4c0-13.3-10.7-24-24-24zM4 32v4h56v-4H4zm8 8v4h40v-4H12zm4 8v8c0 2.2 1.8 4 4 4h24c2.2 0 4-1.8 4-4v-8H16zm14-32a2 2 0 100 4 2 2 0 000-4z" />
-                        </svg>
+                    <img src="{{ url_for('static', path='Noor_e_mahal_ png (2).png') }}" class="service-card-bg"
+                        alt="Facility">
+                    <div class="service-card-overlay"></div>
+                    <div class="service-card-content">
+                        <div class="service-icon"><i class="fas fa-building fa-2x"></i></div>
+                        <h3>Big Hall</h3>
+                        <p>A magnificent, pillar-less grand hall designed to comfortably host 500+ guests.</p>
                     </div>
-                    <h3>Concierge Service</h3>
-                    <p>Dedicated concierge handling every detail of your celebration, from travel arrangements to
-                        personalized event planning.</p>
                 </div>
+                {% endif %}
             </div>
+        </div>
         </div>
     </section>
 
     <!-- ============ PALACE SHOWCASE ============ -->
     <section class="palace-showcase">
         <div class="palace-showcase-bg">
-            <img src="{{ url_for('static', path='Noor_e_mahal_ png (5).png') }}"
+            <img src="{{ images.get('home_showcase', url_for('static', path='Noor_e_mahal_ png (5).png')) }}"
                 alt="Noor E Mahal Palace Panoramic View">
         </div>
         <div class="palace-showcase-overlay">
             <div class="palace-showcase-text">
-                <h2 class="gold-shimmer">Where Dreams Meet Destiny</h2>
-                <p>Experience timeless grandeur in every moment</p>
+                <h2 class="gold-shimmer">{{ content.get('home_showcase_title', 'Where Dreams Meet Destiny') }}</h2>
+                <p>{{ content.get('home_showcase_p', 'Experience timeless grandeur in every moment') }}</p>
             </div>
         </div>
     </section>
@@ -261,10 +295,133 @@
     <!-- ============ ELEPHANT DECORATIVE SECTION ============ -->
     <section class="elephant-section">
         <div class="container">
-            <img src="{{ url_for('static', path='Noor_e_mahal_ png (8).png') }}" alt="Royal Elephant"
-                class="elephant-img reveal-scale">
+            <img src="{{ images.get('home_welcome_elephant', url_for('static', path='Noor_e_mahal_ png (8).png')) }}"
+                alt="Royal Elephant" class="elephant-img reveal-scale">
             <p class="reveal">A Royal Welcome Awaits</p>
         </div>
+    </section>
+
+    <!-- ============ HIGHLIGHTS SECTION ============ -->
+    <section class="highlights-section">
+        <div class="container">
+            <div class="section-heading reveal">
+                <h2 class="gold-shimmer">Palace Highlights</h2>
+                <p>Discover the magic in every detail</p>
+            </div>
+            <div class="highlights-grid">
+                <div class="highlight-card reveal delay-1">
+                    <img src="{{ images.get('home_highlight_1', url_for('static', path='Noor_e_mahal_ png (1).png')) }}"
+                        alt="Royal Architecture">
+                    <div class="highlight-content">
+                        <h3>Royal Architecture</h3>
+                    </div>
+                </div>
+                <div class="highlight-card reveal delay-2">
+                    <img src="{{ images.get('home_highlight_2', url_for('static', path='Noor_e_mahal_ png (2).png')) }}"
+                        alt="Elegant Interiors">
+                    <div class="highlight-content">
+                        <h3>Elegant Interiors</h3>
+                    </div>
+                </div>
+                <div class="highlight-card reveal delay-3">
+                    <img src="{{ images.get('home_highlight_3', url_for('static', path='Noor_e_mahal_ png (5).png')) }}"
+                        alt="Lush Gardens">
+                    <div class="highlight-content">
+                        <h3>Lush Gardens</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ WHY CHOOSE US ============ -->
+    <section class="why-us-section" id="why">
+        <div class="container">
+            <div class="why-us-grid">
+                <div class="why-content reveal-left">
+                    <h2 class="gold-shimmer">{{ content.get('home_why_title', 'Why Choose Noor E Mahal?') }}</h2>
+                    <p>{{ content.get('home_why_text', 'Noor E Mahal is more than just a venue; it is a legacy of royal
+                        hospitality. We specialize in blending the vibrant traditions of Punjabi weddings with the
+                        sophisticated charm of British-style events.') }}</p>
+
+                    <ul class="why-features">
+                        <li><i class="fas fa-check-circle"></i> {{ content.get('home_why_f1', 'Authentic Royal
+                            Experience') }}</li>
+                        <li><i class="fas fa-check-circle"></i> {{ content.get('home_why_f2', 'Bespoke Event Planning')
+                            }}</li>
+                        <li><i class="fas fa-check-circle"></i> {{ content.get('home_why_f3', 'Premier Central
+                            Location') }}</li>
+                    </ul>
+                </div>
+                <div class="why-image reveal-right">
+                    <img src="{{ images.get('home_why_us', url_for('static', path='Noor_e_mahal_ png (1).png')) }}"
+                        alt="Why Noor E Mahal">
+                    <div class="experience-badge">
+                        <span class="number">{{ content.get('home_why_badge_years', '10+') }}</span>
+                        <span class="text">Years of<br>Hospitality</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ FAQ SECTION ============ -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-heading reveal">
+                <h2 class="gold-shimmer">Frequently Asked Questions</h2>
+                <p>Everything you need to know about planning your celebration</p>
+            </div>
+            <div class="faq-list">
+                {% if faqs %}
+                {% for faq in faqs %}
+                <div class="faq-item reveal">
+                    <button class="faq-q">{{ faq.question }} <span class="faq-ico">+</span></button>
+                    <div class="faq-a">
+                        <p>{{ faq.answer }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <!-- Fallback FAQs -->
+                <div class="faq-item reveal">
+                    <button class="faq-q">What is the guest capacity at Noor E Mahal? <span
+                            class="faq-ico">+</span></button>
+                    <div class="faq-a">
+                        <p>We can comfortably accommodate up to 1000+ guests across our grand halls and lush outdoor
+                            lawns.</p>
+                    </div>
+                </div>
+                <div class="faq-item reveal">
+                    <button class="faq-q">Do you provide in-house catering? <span class="faq-ico">+</span></button>
+                    <div class="faq-a">
+                        <p>Yes! Our master chefs specialize in a huge variety of cuisines, from Punjabi traditional
+                            feasts to modern fusion.</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <script>
+        // FAQ Toggle Logic
+        document.querySelectorAll('.faq-q').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                const wasOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+                if (!wasOpen) item.classList.add('open');
+            });
+        });
+    </script>
+
+    <!-- ============ LOCATION MAP SECTION ============ -->
+    <section class="map-section reveal">
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d109749.29756699879!2d74.72298174116211!3d31.633979800000013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391964b7b3700001%3A0xde6e8f3cd4c8424!2sAmritsar%2C%20Punjab!5e0!3m2!1sen!2sin!4v1709000000000"
+            title="Noor E Mahal Location" allowfullscreen="" loading="lazy"></iframe>
     </section>
 
     <!-- ============ FOOTER ============ -->
@@ -284,30 +441,21 @@
                     <h4>Contact</h4>
                     <ul>
                         <li>
-                            <a href="tel:+924512345678">
+                            <a href="tel:{{ content.get('contact_phone_1', '+92 451 234 5678')|replace(' ', '') }}">
                                 <svg viewBox="0 0 24 24">
                                     <path
                                         d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
                                 </svg>
-                                +92 451 234 5678
+                                {{ content.get('contact_phone_1', '+92 451 234 5678') }}
                             </a>
                         </li>
                         <li>
-                            <a href="tel:+924551232350">
-                                <svg viewBox="0 0 24 24">
-                                    <path
-                                        d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                </svg>
-                                +92 455 123 2350
-                            </a>
-                        </li>
-                        <li>
-                            <a href="mailto:info@nooremahal.com">
+                            <a href="mailto:{{ content.get('contact_email', 'info@nooremahal.com') }}">
                                 <svg viewBox="0 0 24 24">
                                     <path
                                         d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                                 </svg>
-                                info@nooremahal.com
+                                {{ content.get('contact_email', 'info@nooremahal.com') }}
                             </a>
                         </li>
                         <li>
@@ -371,6 +519,35 @@
 
     <!-- Scripts -->
     <script src="{{ url_for('static', path='js/main.js') }}"></script>
+    <script>
+        // Hero Slider Logic (Homepage)
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.hero-slider .slide');
+            if (slides.length > 0) {
+                let current = 0;
+                setInterval(() => {
+                    slides[current].classList.remove('active');
+                    current = (current + 1) % slides.length;
+                    slides[current].classList.add('active');
+                }, 5000);
+            }
+
+            // Parallax Effect for Homepage Hero Scroll
+            window.addEventListener('scroll', () => {
+                const scrolled = window.scrollY;
+                const parallaxBgs = document.querySelectorAll('.hero-slider .parallax-bg');
+                const parallaxText = document.querySelector('.hero-slider .parallax-text');
+
+                parallaxBgs.forEach(bg => {
+                    bg.style.transform = `translateY(${scrolled * 0.4}px)`;
+                });
+                if (parallaxText) {
+                    parallaxText.style.transform = `translateY(${scrolled * 0.6}px)`;
+                    parallaxText.style.opacity = 1 - (scrolled / 500);
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

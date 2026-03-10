@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Noor E Mahal</title>
+    <!-- Bootstrap CSS for Admin -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-bg: #1a1a1a;
+            --sidebar-text: #adb5bd;
+            --sidebar-active: #c5a355;
+            --maroon: #6B0F1A;
+            --cream: #FDF8EF;
+            --gold: #C5A355;
+            --white: #ffffff;
+        }
+
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f1f3f5;
+        }
+
+        /* Layout */
+        .admin-wrapper {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-logo {
+            height: 40px;
+            filter: brightness(0) invert(1);
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu {
+            flex-grow: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .menu-item.active {
+            color: var(--sidebar-active);
+            background: rgba(197, 163, 85, 0.1);
+            border-left-color: var(--sidebar-active);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+        }
+
+        /* Editor Section */
+        .editor-pane {
+            width: 45%;
+            min-width: 500px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #dee2e6;
+        }
+
+        .editor-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--maroon);
+            font-weight: 700;
+        }
+
+        .editor-scroll {
+            flex-grow: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        /* Preview Section */
+        .preview-pane {
+            flex-grow: 1;
+            background: #e9ecef;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-toolbar {
+            height: 45px;
+            background: white;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .preview-frame {
+            flex-grow: 1;
+            border: none;
+            background: white;
+        }
+
+        /* Components */
+        .content-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #fafafa;
+        }
+
+        .label-key {
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: #999;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .save-banner {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .img-thumb-container {
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #eee;
+            border: 1px solid #eee;
+        }
+
+        .img-thumb {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .upload-btn-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(107, 15, 26, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: white;
+            font-size: 1.5rem;
+            z-index: 2;
+        }
+
+        .img-thumb-container:hover .upload-btn-overlay {
+            opacity: 1;
+            background: rgba(107, 15, 26, 0.7);
+        }
+
+        .bg-gold {
+            background-color: var(--gold-dark) !important;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .royal-toast {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 4px solid var(--gold);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transform: translateX(120%);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: all;
+            min-width: 300px;
+        }
+
+        .royal-toast.show {
+            transform: translateX(0);
+        }
+
+        .royal-toast.error {
+            border-left-color: #d32f2f;
+        }
+
+        .royal-toast i {
+            font-size: 1.5rem;
+            color: var(--gold-dark);
+        }
+
+        .royal-toast.error i {
+            color: #d32f2f;
+        }
+
+        .toast-content {
+            flex-grow: 1;
+        }
+
+        .toast-title {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--maroon);
+            margin-bottom: 2px;
+        }
+
+        .toast-msg {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="{{ url_for('static', path='Noor_e_mahal_ png (6).png') }}" class="sidebar-logo" alt="">
+                <div class="fw-bold text-white small">PALACE ADMIN</div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <div class="menu-item active" onclick="switchPage('home', '/')">
+                    <i class="fas fa-home"></i> Homepage
+                </div>
+                <div class="menu-item" onclick="switchPage('about', '/about')">
+                    <i class="fas fa-history"></i> About Us
+                </div>
+                <div class="menu-item" onclick="switchPage('facilities', '/facilities')">
+                    <i class="fas fa-concierge-bell"></i> Facilities
+                </div>
+                <div class="menu-item" onclick="switchPage('gallery', '/gallery')">
+                    <i class="fas fa-images"></i> Gallery
+                </div>
+                <div class="menu-item" onclick="switchPage('contact', '/contact')">
+                    <i class="fas fa-paper-plane"></i> Contact Details
+                </div>
+                <hr style="border-color: rgba(255,255,255,0.1);">
+                <div class="menu-item" onclick="switchPage('common', '/')">
+                    <i class="fas fa-cog"></i> Global Settings
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="/admin/logout" class="menu-item text-danger border-0 p-0">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Editor Pane -->
+            <section class="editor-pane">
+                <div class="editor-header">
+                    <h2 id="page-title">Homepage Editor</h2>
+                    <button class="btn btn-sm btn-dark" onclick="refreshPreview()"><i
+                            class="fas fa-sync-alt"></i></button>
+                </div>
+
+                <div class="editor-scroll" id="editor-container">
+                    <!-- Dynamic content will be injected here via JS -->
+                    <div class="text-center py-5 text-muted">Loading editor...</div>
+                </div>
+            </section>
+
+            <!-- Preview Pane -->
+            <section class="preview-pane">
+                <div class="preview-toolbar">
+                    <div id="preview-url">Viewing: /</div>
+                    <div><i class="fas fa-desktop"></i> Tablet & Mobile responsive view available on resize</div>
+                </div>
+                <iframe src="/" class="preview-frame" id="preview-iframe"></iframe>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Hidden Data Storage (for JS access) -->
+    <script id="site-data" type="application/json">
+        {
+            "content": [
+                {% for item in content %}
+                {"key": "{{ item.key }}", "value": {{ item.value|tojson }} }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            "images": [
+                {% for img in images %}
+                {"id": {{ img.id }}, "url": "{{ img.url }}", "alt": "{{ img.alt_text }}", "category": "{{ img.category }}"}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            "facilities": [
+                {% for f in facilities %}
+                {"id": {{ f.id }}, "name": "{{ f.name }}", "desc": {{ f.description|tojson }}, "icon": "{{ f.icon_class }}"}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            "faqs": [
+                {% for q in faqs %}
+                {"id": {{ q.id }}, "question": "{{ q.question }}", "answer": {{ q.answer|tojson }} }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const store = JSON.parse(document.getElementById('site-data').textContent);
+        let currentPage = 'home';
+
+        function switchPage(pageId, route) {
+            currentPage = pageId;
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            // Match text with some flexibility for global/common
+            const activeItem = Array.from(document.querySelectorAll('.menu-item')).find(el => {
+                const text = el.innerText.toLowerCase();
+                if (pageId === 'common' && text.includes('global')) return true;
+                return text.includes(pageId);
+            });
+            if (activeItem) activeItem.classList.add('active');
+
+            document.getElementById('page-title').innerText = pageId.charAt(0).toUpperCase() + pageId.slice(1) + ' Editor';
+            document.getElementById('preview-url').innerText = 'Viewing: ' + route;
+            document.getElementById('preview-iframe').src = route;
+
+            renderEditor();
+        }
+
+        function renderEditor() {
+            const container = document.getElementById('editor-container');
+            container.innerHTML = '';
+
+            // 1. Render Text Content for this page
+            const pageContent = store.content.filter(c => c.key.startsWith(currentPage + '_') || (currentPage === 'common' && (c.key.startsWith('common_') || c.key.startsWith('contact_'))));
+
+            if (pageContent.length > 0) {
+                const textSection = document.createElement('div');
+                textSection.innerHTML = '<h5 class="mb-3">Page Text & Titles</h5>';
+                pageContent.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'content-card';
+                    div.innerHTML = `
+                        <span class="label-key">${item.key}</span>
+                        <div class="mb-2">
+                            <textarea class="form-control form-control-sm" id="input_${item.key}" rows="3">${item.value}</textarea>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="updateText(this, '${item.key}')">Save Text</button>
+                    `;
+                    textSection.appendChild(div);
+                });
+                container.appendChild(textSection);
+            }
+
+            // 2. Render Image Assets (Grouped and organized)
+            const pageImages = store.images.filter(img => {
+                const cat = img.category.toLowerCase();
+                if (currentPage === 'home') return cat.startsWith('home');
+                if (currentPage === 'about') return cat.startsWith('about');
+                if (currentPage === 'facilities') return cat.startsWith('facilities');
+                if (currentPage === 'contact') return cat.startsWith('contact');
+                return false;
+            });
+
+            if (pageImages.length > 0) {
+                const imgSection = document.createElement('div');
+                imgSection.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+                        <h5 class="m-0">Palace Imagery (${pageImages.length} Slots)</h5>
+                        <small class="text-muted">Replace any image slot on this page</small>
+                    </div>
+                `;
+                const grid = document.createElement('div');
+                grid.className = 'row g-3';
+                pageImages.forEach(img => {
+                    // Clean up display name: home_hero_1 -> Hero 1
+                    let displayName = img.category.replace(currentPage + '_', '').replace(/_/g, ' ');
+                    displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+
+                    grid.innerHTML += `
+                        <div class="col-md-6 col-lg-4">
+                            <div class="content-card h-100 d-flex flex-column">
+                                <span class="label-key text-truncate" title="${img.category}">${displayName}</span>
+                                <div class="img-thumb-container mb-2 position-relative">
+                                    <img src="${img.url}" class="img-thumb" style="height: 120px; object-fit: cover; width: 100%;">
+                                    <label for="file_input_${img.id}" class="upload-btn-overlay">
+                                        <i class="fas fa-upload"></i>
+                                    </label>
+                                    <input type="file" id="file_input_${img.id}" class="d-none" accept="image/*" onchange="uploadImage(this, ${img.id})">
+                                </div>
+                                <div class="mt-auto">
+                                    <div class="input-group input-group-sm mb-2">
+                                        <input type="text" class="form-control" id="img_url_${img.id}" value="${img.url}" placeholder="Image URL">
+                                        <button class="btn btn-outline-primary" onclick="updateImg(this, ${img.id})">Save URL</button>
+                                    </div>
+                                    <div id="progress_${img.id}" class="progress d-none mb-2" style="height: 4px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-gold" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                imgSection.appendChild(grid);
+                container.appendChild(imgSection);
+            }
+
+            // 3. Special Case: Facilities
+            if (currentPage === 'facilities' || currentPage === 'home') {
+                const facSection = document.createElement('div');
+                facSection.innerHTML = `<h5 class="mt-4 mb-3">Manage Facilities ${currentPage === 'home' ? '(Visible on Home)' : ''}</h5>`;
+                store.facilities.forEach(f => {
+                    facSection.innerHTML += `
+                        <div class="content-card">
+                            <div class="row align-items-center">
+                                <div class="col-auto"><i class="${f.icon} fa-lg text-gold"></i></div>
+                                <div class="col"><input type="text" class="form-control form-control-sm fw-bold border-0" value="${f.name}"></div>
+                            </div>
+                            <textarea class="form-control form-control-sm mt-2 mb-2" rows="2">${f.desc}</textarea>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="showRoyalToast('Feature Notice', 'List item updates coming in next patch.')">Update</button>
+                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.appendChild(facSection);
+            }
+
+            // 4. Special Case: FAQs
+            if (currentPage === 'home' || currentPage === 'contact') {
+                const faqSection = document.createElement('div');
+                faqSection.innerHTML = '<h5 class="mt-4 mb-3">Frequently Asked Questions</h5>';
+                store.faqs.forEach(q => {
+                    faqSection.innerHTML += `
+                        <div class="content-card">
+                            <input type="text" class="form-control form-control-sm fw-bold mb-2" value="${q.question}">
+                            <textarea class="form-control form-control-sm mb-2" rows="2">${q.answer}</textarea>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="showRoyalToast('Feature Notice', 'FAQ sorting & updates coming soon.')">Update FAQ</button>
+                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.appendChild(faqSection);
+            }
+        }
+
+        async function updateText(btn, key) {
+            const input = document.getElementById('input_' + key);
+            const val = input.value;
+
+            setLoading(btn, true);
+            try {
+                const res = await fetch('/admin/api/content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key, value: val })
+                });
+
+                if (res.ok) {
+                    const item = store.content.find(c => c.key === key);
+                    if (item) item.value = val;
+                    else store.content.push({ key, value: val });
+                    showRoyalToast('Success', 'Palace text has been updated safely.');
+                } else {
+                    showRoyalToast('Update Failed', 'Could not save changes to the vault.', true);
+                }
+            } catch (e) {
+                showRoyalToast('Network Error', 'The connection was lost.', true);
+            } finally {
+                setLoading(btn, false);
+            }
+        }
+
+        async function updateImg(btn, id) {
+            const url = document.getElementById('img_url_' + id).value;
+            setLoading(btn, true);
+            try {
+                const res = await fetch('/admin/api/image/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, url, alt_text: '' })
+                });
+
+                if (res.ok) {
+                    const img = store.images.find(i => i.id === id);
+                    if (img) img.url = url;
+                    renderEditor(); // Refresh to show new image in thumb
+                    showRoyalToast('Success', 'The royal imagery has been refreshed.');
+                } else {
+                    showRoyalToast('Error', 'The image could not be updated.', true);
+                }
+            } catch (e) {
+                showRoyalToast('Network Error', 'Connection lost.', true);
+            } finally {
+                setLoading(btn, false);
+            }
+        }
+
+        async function uploadImage(input, id) {
+            if (!input.files || !input.files[0]) return;
+
+            const file = input.files[0];
+            const formData = new FormData();
+            formData.append('image_id', id);
+            formData.append('file', file);
+
+            const progressWrap = document.getElementById('progress_' + id);
+            const progressBar = progressWrap.querySelector('.progress-bar');
+
+            progressWrap.classList.remove('d-none');
+            progressBar.style.width = '0%';
+
+            try {
+                const res = await fetch('/admin/api/image/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    const img = store.images.find(i => i.id === id);
+                    if (img) img.url = data.url;
+
+                    document.getElementById('img_url_' + id).value = data.url;
+                    renderEditor();
+                    showRoyalToast('Palace Updated', 'Your image has been uploaded to the Royal Vault.');
+                } else {
+                    showRoyalToast('Upload Failed', 'The royal treasury could not accept this file.', true);
+                }
+            } catch (e) {
+                showRoyalToast('Network Error', 'The connection was interrupted.', true);
+            } finally {
+                setTimeout(() => {
+                    progressWrap.classList.add('d-none');
+                    progressBar.style.width = '0%';
+                }, 1000);
+            }
+        }
+
+        function showRoyalToast(title, msg, isError = false) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `royal-toast ${isError ? 'error' : ''}`;
+            toast.innerHTML = `
+                <i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-msg">${msg}</div>
+                </div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 600);
+            }, 4000);
+        }
+
+        function setLoading(btn, active) {
+            if (!btn || btn.tagName !== 'BUTTON') return;
+            if (active) {
+                btn.dataset.original = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                btn.disabled = true;
+            } else {
+                btn.innerHTML = btn.dataset.original || 'Save';
+                btn.disabled = false;
+            }
+        }
+
+        function refreshPreview() {
+            document.getElementById('preview-iframe').contentWindow.location.reload();
+            showRoyalToast('Refresh', 'Live preview has been reloaded.');
+        }
+
+        switchPage('home', '/');
+    </script>
+</body>
+
+</html>
+```
