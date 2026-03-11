@@ -15,9 +15,11 @@ ADMIN_PASS = os.getenv("ADMIN_PASS", "nooremahal2024")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    return pwd_context.verify(plain_password[:72], hashed_password)
 
 def get_password_hash(password):
+    # Bcrypt officially has a 72-byte limit. We truncate to 72 characters 
+    # to ensure consistency and avoid potential library errors.
     return pwd_context.hash(password[:72])
 
 # Hash the admin password once on startup for comparison
