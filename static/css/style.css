@@ -53,6 +53,7 @@
 html {
     scroll-behavior: smooth;
     overflow-x: hidden;
+    scroll-padding-top: 90px;
 }
 
 body {
@@ -62,6 +63,8 @@ body {
     color: var(--text-body);
     background-color: var(--cream);
     overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -140,7 +143,8 @@ img {
 .reveal {
     opacity: 0;
     transform: translateY(50px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
+    transition: opacity 0.95s cubic-bezier(0.22, 1, 0.36, 1), transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
 }
 
 .reveal.active {
@@ -151,7 +155,8 @@ img {
 .reveal-left {
     opacity: 0;
     transform: translateX(-60px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
+    transition: opacity 0.95s cubic-bezier(0.22, 1, 0.36, 1), transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
 }
 
 .reveal-left.active {
@@ -162,7 +167,8 @@ img {
 .reveal-right {
     opacity: 0;
     transform: translateX(60px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
+    transition: opacity 0.95s cubic-bezier(0.22, 1, 0.36, 1), transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
 }
 
 .reveal-right.active {
@@ -173,7 +179,8 @@ img {
 .reveal-scale {
     opacity: 0;
     transform: scale(0.85);
-    transition: opacity 0.8s ease, transform 0.8s ease;
+    transition: opacity 0.95s cubic-bezier(0.22, 1, 0.36, 1), transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
 }
 
 .reveal-scale.active {
@@ -1806,6 +1813,8 @@ img {
     background: var(--cream);
     position: relative;
     overflow: hidden;
+    content-visibility: auto;
+    contain-intrinsic-size: 900px;
 }
 
 .services-grid {
@@ -1847,6 +1856,13 @@ img {
     transform: scale(1.08);
     transition: opacity 0.55s ease, transform 0.9s ease, filter 0.9s ease;
     filter: saturate(1.08) contrast(1.04) brightness(0.95);
+}
+
+.service-icon img {
+    width: 3rem;
+    height: 3rem;
+    object-fit: contain;
+    display: inline-block;
 }
 
 .service-card-overlay {

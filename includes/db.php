@@ -12,6 +12,23 @@ try {
 }
 
 /**
+ * Ensure legacy tables include the columns expected by the current UI.
+ */
+function ensureFacilitiesSchema($db) {
+    $columns = [];
+    $stmt = $db->query("PRAGMA table_info(facilities)");
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $columns[] = $row['name'];
+    }
+
+    if (!in_array('icon_url', $columns, true)) {
+        $db->exec("ALTER TABLE facilities ADD COLUMN icon_url VARCHAR(255)");
+    }
+}
+
+ensureFacilitiesSchema($db);
+
+/**
  * Fetch all site content as a key-value array
  */
 function getSiteContent($db) {

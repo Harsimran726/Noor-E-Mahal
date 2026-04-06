@@ -2,6 +2,7 @@
 session_start();
 if (!isset($_SESSION['admin_logged_in'])) {
     http_response_code(401);
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
     exit;
 }
@@ -9,6 +10,8 @@ if (!isset($_SESSION['admin_logged_in'])) {
 require_once __DIR__ . '/../includes/db.php';
 
 $action = $_GET['action'] ?? '';
+
+header('Content-Type: application/json; charset=utf-8');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'content') {
@@ -226,8 +229,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
+        if ($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Upload error code: ' . $_FILES['file']['error']]);
+            exit;
+        }
+
         $uploadDir = __DIR__ . '/../static/uploads/';
-        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0777, true)) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Could not create upload directory.']);
+            exit;
+        }
+        if (!is_writable($uploadDir)) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Upload directory is not writable.']);
+            exit;
+        }
         
         $fileInfo = pathinfo($_FILES['file']['name']);
         $filename = uniqid() . '.' . ($fileInfo['extension'] ?? 'jpg');
@@ -245,6 +263,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'facility_icon_upload') {
+        $id = $_POST['id'] ?? '';
+        if (empty($_FILES['file']) || !$id) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'File and Facility ID are required.']);
+            exit;
+        }
+
+        if ($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Upload error code: ' . $_FILES['file']['error']]);
+            exit;
+        }
+
+        $uploadDir = __DIR__ . '/../static/uploads/';
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0777, true)) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Could not create upload directory.']);
+            exit;
+        }
+        if (!is_writable($uploadDir)) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Upload directory is not writable.']);
+            exit;
+        }
+
+        $fileInfo = pathinfo($_FILES['file']['name']);
+        $filename = uniqid('icon_') . '.' . ($fileInfo['extension'] ?? 'png');
+        $dest = $uploadDir . $filename;
+
+        if (move_uploaded_file($_FILES['file']['tmp_name'], $dest)) {
+            $relative_path = 'static/uploads/' . $filename;
+            $stmt = $db->prepare("UPDATE facilities SET icon_url = ? WHERE id = ?");
+            $stmt->execute([$relative_path, $id]);
+            echo json_encode(['status' => 'success', 'url' => $relative_path]);
+        } else {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Failed to save file.']);
+        }
+        exit;
+    }
+
     if ($action === 'facility_add') {
         try {
             $data = json_decode(file_get_contents('php://input'), true);
@@ -252,17 +312,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $desc = trim($data['desc'] ?? '');
             $icon_class = trim($data['icon_class'] ?? 'fas fa-star');
             $image_url = trim($data['image_url'] ?? '');
+            $icon_url = trim($data['icon_url'] ?? '');
             $image_url = str_replace(["\n", "\r", "\t"], '', $image_url);
+            $icon_url = str_replace(["\n", "\r", "\t"], '', $icon_url);
             
             // Try with 'desc' first
             try {
-                $stmt = $db->prepare("INSERT INTO facilities (name, `desc`, icon_class, image_url) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$name, $desc, $icon_class, $image_url]);
+                $stmt = $db->prepare("INSERT INTO facilities (name, `desc`, icon_class, image_url, icon_url) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $desc, $icon_class, $image_url, $icon_url]);
                 echo json_encode(['status' => 'success', 'id' => $db->lastInsertId()]);
             } catch (Exception $e1) {
                 // If 'desc' fails, try 'description'
-                $stmt = $db->prepare("INSERT INTO facilities (name, description, icon_class, image_url) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$name, $desc, $icon_class, $image_url]);
+                $stmt = $db->prepare("INSERT INTO facilities (name, description, icon_class, image_url, icon_url) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $desc, $icon_class, $image_url, $icon_url]);
                 echo json_encode(['status' => 'success', 'id' => $db->lastInsertId()]);
             }
         } catch (Exception $e) {
@@ -280,18 +342,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $desc = trim($data['desc'] ?? '');
             $icon_class = trim($data['icon_class'] ?? '');
             $image_url = trim($data['image_url'] ?? '');
+            $icon_url = trim($data['icon_url'] ?? '');
             $image_url = str_replace(["\n", "\r", "\t"], '', $image_url);
+            $icon_url = str_replace(["\n", "\r", "\t"], '', $icon_url);
             
             if ($id) {
                 // Try with 'desc' first
                 try {
-                    $stmt = $db->prepare("UPDATE facilities SET name = ?, `desc` = ?, icon_class = ?, image_url = ? WHERE id = ?");
-                    $stmt->execute([$name, $desc, $icon_class, $image_url, $id]);
+                    $stmt = $db->prepare("UPDATE facilities SET name = ?, `desc` = ?, icon_class = ?, image_url = ?, icon_url = ? WHERE id = ?");
+                    $stmt->execute([$name, $desc, $icon_class, $image_url, $icon_url, $id]);
                     echo json_encode(['status' => 'success']);
                 } catch (Exception $e1) {
                     // If 'desc' fails, try 'description'
-                    $stmt = $db->prepare("UPDATE facilities SET name = ?, description = ?, icon_class = ?, image_url = ? WHERE id = ?");
-                    $stmt->execute([$name, $desc, $icon_class, $image_url, $id]);
+                    $stmt = $db->prepare("UPDATE facilities SET name = ?, description = ?, icon_class = ?, image_url = ?, icon_url = ? WHERE id = ?");
+                    $stmt->execute([$name, $desc, $icon_class, $image_url, $icon_url, $id]);
                     echo json_encode(['status' => 'success']);
                 }
             } else {

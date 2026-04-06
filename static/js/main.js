@@ -4,6 +4,14 @@
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
+    let scrollRaf = 0;
+    const rafScroll = (callback) => {
+        if (scrollRaf) return;
+        scrollRaf = window.requestAnimationFrame(() => {
+            scrollRaf = 0;
+            callback();
+        });
+    };
 
     // ——— Preloader ———
     const preloader = document.querySelector('.preloader');
@@ -23,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             navbar.classList.remove('scrolled');
         }
     };
-    window.addEventListener('scroll', handleNavScroll, { passive: true });
+    window.addEventListener('scroll', () => rafScroll(handleNavScroll), { passive: true });
     handleNavScroll();
 
     // ——— Mobile Nav Toggle ———
@@ -107,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Scroll parallax on hero (depth scrolling)
-        window.addEventListener('scroll', () => {
+        window.addEventListener('scroll', () => rafScroll(() => {
             const scrolled = window.scrollY;
             if (scrolled < window.innerHeight) {
                 const parallaxY = scrolled * 0.4;
@@ -120,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     heroContent.style.opacity = opacity;
                 }
             }
-        }, { passive: true });
+        }), { passive: true });
     }
 
     // ============================================================
@@ -178,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const palaceText = document.querySelector('.palace-showcase-text');
 
     if (palaceShowcase) {
-        window.addEventListener('scroll', () => {
+        window.addEventListener('scroll', () => rafScroll(() => {
             const rect = palaceShowcase.getBoundingClientRect();
             const viewH = window.innerHeight;
 
@@ -194,14 +202,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     palaceText.style.transform = `translate3d(0, ${textY}px, 0)`;
                 }
             }
-        }, { passive: true });
+        }), { passive: true });
     }
 
     // ============================================================
     //  3D PARALLAX — Sections Scroll Depth
     //  Elements get subtle 3D rotation on scroll
     // ============================================================
-    const parallaxSections = document.querySelectorAll('.services-section, .elephant-section');
+    const parallaxSections = document.querySelectorAll('.elephant-section');
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {

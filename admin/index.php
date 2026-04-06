@@ -788,6 +788,18 @@ foreach ($images as &$img) {
                             <input type="file" id="fac_file_${f.id}" class="d-none" accept="image/*" onchange="uploadFacilityImage(this, ${f.id})">
                         </div>
                         <div id="fac_progress_${f.id}" class="progress d-none mb-2" style="height: 3px;"><div class="progress-bar bg-gold" style="width:0%"></div></div>
+
+                        <label class="form-label text-muted small mb-1">Icon Image</label>
+                        <div class="img-thumb-container mb-2 position-relative" style="height: 96px; flex-shrink: 0;">
+                            <img src="${f.icon_url || '../static/Noor_e_mahal_ png (6).png'}" class="img-thumb" style="height: 100%; object-fit: contain; width: 100%; background: #111; border-radius: 4px;">
+                            <label for="fac_icon_file_${f.id}" class="upload-btn-overlay"><i class="fas fa-image"></i></label>
+                            <input type="file" id="fac_icon_file_${f.id}" class="d-none" accept="image/*" onchange="uploadFacilityIcon(this, ${f.id})">
+                        </div>
+                        <div id="fac_icon_progress_${f.id}" class="progress d-none mb-2" style="height: 3px;"><div class="progress-bar bg-gold" style="width:0%"></div></div>
+                        <div class="input-group input-group-sm mb-2">
+                            <input type="text" class="form-control" id="fac_icon_url_${f.id}" value="${f.icon_url || ''}" placeholder="Icon image URL">
+                            <button class="btn btn-outline-primary" onclick="updateFacilityIconUrl(this, ${f.id})">Save</button>
+                        </div>
                         
                         <label class="form-label text-muted small mb-1">Facility Name</label>
                         <input type="text" class="form-control form-control-sm fw-bold mb-2" id="fac_name_${f.id}" value="${f.name}">
@@ -932,12 +944,34 @@ foreach ($images as &$img) {
                         <div class="col-md-6">
                             <label class="form-label text-muted small mb-1">Instagram Link</label>
                             <input type="text" class="form-control form-control-sm" id="input_common_footer_instagram" value="${store.content.find(c => c.key === 'common_footer_instagram')?.value || 'https://www.instagram.com/nooremahal_mansa/'}">
-                            <button class="btn btn-sm btn-outline-primary mt-2" onclick="updateText(this, 'common_footer_instagram')">Save Text</button>
+                            <div class="d-flex gap-2 mt-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="updateText(this, 'common_footer_instagram')">Save Text</button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="clearFooterText('common_footer_instagram', 'input_common_footer_instagram')">Clear</button>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-muted small mb-1">Facebook Link</label>
                             <input type="text" class="form-control form-control-sm" id="input_common_footer_facebook" value="${store.content.find(c => c.key === 'common_footer_facebook')?.value || 'https://www.facebook.com/people/Noor-E-Mahal/61586134415662/'}">
-                            <button class="btn btn-sm btn-outline-primary mt-2" onclick="updateText(this, 'common_footer_facebook')">Save Text</button>
+                            <div class="d-flex gap-2 mt-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="updateText(this, 'common_footer_facebook')">Save Text</button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="clearFooterText('common_footer_facebook', 'input_common_footer_facebook')">Clear</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small mb-1">YouTube Link</label>
+                            <input type="text" class="form-control form-control-sm" id="input_common_footer_youtube" value="${store.content.find(c => c.key === 'common_footer_youtube')?.value || ''}" placeholder="Leave blank to hide">
+                            <div class="d-flex gap-2 mt-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="updateText(this, 'common_footer_youtube')">Save Text</button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="clearFooterText('common_footer_youtube', 'input_common_footer_youtube')">Clear</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small mb-1">Twitter/X Link</label>
+                            <input type="text" class="form-control form-control-sm" id="input_common_footer_twitter" value="${store.content.find(c => c.key === 'common_footer_twitter')?.value || ''}" placeholder="Leave blank to hide">
+                            <div class="d-flex gap-2 mt-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="updateText(this, 'common_footer_twitter')">Save Text</button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="clearFooterText('common_footer_twitter', 'input_common_footer_twitter')">Clear</button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -972,6 +1006,12 @@ foreach ($images as &$img) {
             } finally {
                 setLoading(btn, false);
             }
+        }
+
+        async function clearFooterText(key, inputId) {
+            const input = document.getElementById(inputId);
+            if (input) input.value = '';
+            await updateText(null, key);
         }
 
         async function updateTestimonial(index) {
@@ -1396,6 +1436,10 @@ foreach ($images as &$img) {
                     <input type="text" id="new_fac_icon_class" class="form-control bg-dark text-white border-secondary" placeholder="e.g., fas fa-snowflake" value="fas fa-star">
                 </div>
                 <div class="mb-3 text-start">
+                    <label class="form-label text-white-50 small">Icon Image URL</label>
+                    <input type="text" id="new_fac_icon_url" class="form-control bg-dark text-white border-secondary" placeholder="https://example.com/icon.png">
+                </div>
+                <div class="mb-3 text-start">
                     <label class="form-label text-white-50 small">Image URL</label>
                     <input type="text" id="new_fac_image" class="form-control bg-dark text-white border-secondary" placeholder="https://example.com/image.jpg">
                 </div>
@@ -1407,6 +1451,7 @@ foreach ($images as &$img) {
             const name = document.getElementById('new_fac_name').value.trim();
             const desc = document.getElementById('new_fac_desc').value.trim();
             const icon_class = document.getElementById('new_fac_icon_class').value.trim() || 'fas fa-star';
+            const icon_url = document.getElementById('new_fac_icon_url').value.trim();
             const image_url = document.getElementById('new_fac_image').value.trim();
             
             if (!name) {
@@ -1417,13 +1462,13 @@ foreach ($images as &$img) {
                 const res = await fetch('api.php?action=facility_add', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, desc, icon_class, image_url })
+                    body: JSON.stringify({ name, desc, icon_class, icon_url, image_url })
                 });
 
                 const responseData = await res.json();
                 
                 if (res.ok && responseData.status === 'success') {
-                    store.facilities.push({ id: responseData.id, name, desc, icon_class, image_url });
+                    store.facilities.push({ id: responseData.id, name, desc, icon_class, icon_url, image_url });
                     renderEditor();
                     refreshPreview();
                     showRoyalToast('Success', 'New facility added successfully.');
@@ -1440,6 +1485,7 @@ foreach ($images as &$img) {
             const name = document.getElementById('fac_name_' + id).value;
             const desc = document.getElementById('fac_desc_' + id).value;
             const icon_class = document.getElementById('fac_icon_class_' + id).value;
+            const icon_url = document.getElementById('fac_icon_url_' + id).value;
             const image_url = document.getElementById('fac_image_' + id).value;
 
             setLoading(btn, true);
@@ -1447,7 +1493,7 @@ foreach ($images as &$img) {
                 const res = await fetch('api.php?action=facility_update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, name, desc, icon_class, image_url })
+                    body: JSON.stringify({ id, name, desc, icon_class, icon_url, image_url })
                 });
 
                 if (res.ok) {
@@ -1456,6 +1502,7 @@ foreach ($images as &$img) {
                         fac.name = name;
                         fac.desc = desc;
                         fac.icon_class = icon_class;
+                        fac.icon_url = icon_url;
                         fac.image_url = image_url;
                     }
                     refreshPreview();
@@ -1540,6 +1587,65 @@ foreach ($images as &$img) {
             }
         }
 
+        async function updateFacilityIconUrl(btn, id) {
+            const fac = store.facilities.find(f => f.id === id);
+            if (!fac) return;
+            const icon_url = document.getElementById('fac_icon_url_' + id).value.trim();
+
+            setLoading(btn, true);
+            try {
+                const res = await fetch('api.php?action=facility_update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, name: fac.name, desc: fac.desc, icon_class: fac.icon_class, icon_url, image_url: fac.image_url || '' })
+                });
+
+                if (res.ok) {
+                    fac.icon_url = icon_url;
+                    refreshPreview();
+                    showRoyalToast('Success', 'Facility icon updated.');
+                } else {
+                    showRoyalToast('Error', 'Could not update facility icon.', true);
+                }
+            } catch (e) {
+                showRoyalToast('Error', 'Network error.', true);
+            } finally {
+                setLoading(btn, false);
+            }
+        }
+
+        async function uploadFacilityIcon(input, id) {
+            if (!input.files || !input.files[0]) return;
+
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('file', input.files[0]);
+
+            const progressWrap = document.getElementById('fac_icon_progress_' + id);
+            if (progressWrap) progressWrap.classList.remove('d-none');
+
+            try {
+                const res = await fetch('./api.php?action=facility_icon_upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await res.json().catch(() => null);
+
+                if (res.ok && data && data.status === 'success') {
+                    const fac = store.facilities.find(f => f.id === id);
+                    if (fac) fac.icon_url = data.url;
+                    renderEditor();
+                    refreshPreview();
+                    showRoyalToast('Success', 'Facility icon uploaded.');
+                } else {
+                    showRoyalToast('Error', (data && data.message) ? data.message : 'Failed to upload facility icon.', true);
+                }
+            } catch (e) {
+                showRoyalToast('Error', 'Upload failed: ' + e.message, true);
+            }
+        }
+
         async function uploadFacilityImage(input, id) {
             if (!input.files || !input.files[0]) return;
             const formData = new FormData();
@@ -1550,7 +1656,7 @@ foreach ($images as &$img) {
             if (progressWrap) progressWrap.classList.remove('d-none');
 
             try {
-                const res = await fetch('api.php?action=facility_image_upload', {
+                const res = await fetch('./api.php?action=facility_image_upload', {
                     method: 'POST',
                     body: formData
                 });
