@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //  3D PARALLAX — Sections Scroll Depth
     //  Elements get subtle 3D rotation on scroll
     // ============================================================
-    const parallaxSections = document.querySelectorAll('.services-section, .testimonials-section, .elephant-section');
+    const parallaxSections = document.querySelectorAll('.services-section, .elephant-section');
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -218,10 +218,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // ——— Testimonials Carousel ———
     const track = document.querySelector('.testimonials-track');
     const dots = document.querySelectorAll('.testimonial-dot');
+    const prevButton = document.querySelector('.testimonial-prev');
+    const nextButton = document.querySelector('.testimonial-next');
     if (track && dots.length > 0) {
         let currentSlide = 0;
         const cards = track.querySelectorAll('.testimonial-card');
         let cardsPerView = 3;
+        let totalSlides = 1;
+        let autoPlay;
+        const carousel = document.querySelector('.testimonials-carousel');
+        const autoPlayDelay = 7000;
 
         const updateCardsPerView = () => {
             if (window.innerWidth <= 768) {
@@ -231,14 +237,17 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 cardsPerView = 3;
             }
+            totalSlides = Math.max(1, Math.ceil(cards.length / cardsPerView));
+            dots.forEach((dot, i) => {
+                dot.style.display = i < totalSlides ? 'inline-block' : 'none';
+            });
         };
         updateCardsPerView();
 
-        const totalSlides = Math.ceil(cards.length / cardsPerView);
-
         const goToSlide = (index) => {
-            currentSlide = index;
-            const translateX = -(currentSlide * cardsPerView * (100 / cards.length));
+            currentSlide = (index + totalSlides) % totalSlides;
+            const slideWidth = window.innerWidth <= 768 ? 100 : (100 / totalSlides);
+            const translateX = -(currentSlide * slideWidth);
             track.style.transform = `translateX(${translateX}%)`;
             dots.forEach((dot, i) => {
                 dot.classList.toggle('active', i === currentSlide);
@@ -249,26 +258,59 @@ document.addEventListener('DOMContentLoaded', () => {
             dot.addEventListener('click', () => goToSlide(i));
         });
 
-        let autoPlay = setInterval(() => {
-            const next = (currentSlide + 1) % totalSlides;
-            goToSlide(next);
-        }, 5000);
+        const startAutoPlay = () => {
+            clearInterval(autoPlay);
+            autoPlay = setInterval(() => {
+                const next = (currentSlide + 1) % totalSlides;
+                goToSlide(next);
+            }, autoPlayDelay);
+        };
 
-        const carousel = document.querySelector('.testimonials-carousel');
+        const stopAutoPlay = () => {
+            clearInterval(autoPlay);
+        };
+
+        const goPrev = () => {
+            goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+        };
+
+        const goNext = () => {
+            goToSlide((currentSlide + 1) % totalSlides);
+        };
+
+        if (prevButton) {
+            prevButton.addEventListener('click', () => {
+                goPrev();
+                if (window.innerWidth > 768) startAutoPlay();
+            });
+        }
+
+        if (nextButton) {
+            nextButton.addEventListener('click', () => {
+                goNext();
+                if (window.innerWidth > 768) startAutoPlay();
+            });
+        }
+
         if (carousel) {
-            carousel.addEventListener('mouseenter', () => clearInterval(autoPlay));
+            carousel.addEventListener('mouseenter', stopAutoPlay);
             carousel.addEventListener('mouseleave', () => {
-                autoPlay = setInterval(() => {
-                    const next = (currentSlide + 1) % totalSlides;
-                    goToSlide(next);
-                }, 5000);
+                if (window.innerWidth > 768) startAutoPlay();
             });
         }
 
         window.addEventListener('resize', () => {
             updateCardsPerView();
             goToSlide(0);
+            if (window.innerWidth > 768) {
+                startAutoPlay();
+            } else {
+                stopAutoPlay();
+            }
         });
+        if (window.innerWidth > 768) {
+            startAutoPlay();
+        }
         goToSlide(0);
     }
 
